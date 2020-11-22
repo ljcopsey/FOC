@@ -31,7 +31,7 @@ class Main {
 
 		// Below is the kind of code you might want to write to test your parser
 
-		ContextFreeGrammar cfg = MyGrammar.makeGrammar();
+		ContextFreeGrammar cfg = MyGrammar.courseworkCNF();
 		Word testString = new Word("x+x");
 
 		// this should print true!
@@ -89,6 +89,7 @@ class Main {
 			} while(input != 9);
 		}
 		else {
+
 			runTests();
 		}
 	}
