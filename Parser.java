@@ -27,13 +27,14 @@ public class Parser implements IParser {
         while (steps < (2 * n - 1)) {
             List<Word> newActiveStrings = new ArrayList<>();
             for (Word activeString : activeStrings) {
-                for (Symbol symbol : activeString) {
+                for (int i = 0; i < activeString.length(); i++) {
+                    Symbol symbol = activeString.get(i);
                     for (Rule rule : rules) {
-                        String ruleString = rule.getVariable().toString();
-                        if (symbol.toString().equals(ruleString)) {
-                            newActiveStrings.add(rule.getExpansion());
-                            System.out.println(newActiveStrings);
-
+                        Variable ruleVariable = rule.getVariable();
+                        if (symbol.equals(ruleVariable)) {
+                            Word expansion = rule.getExpansion();
+                            Word replace = activeString.replace(i, expansion);
+                            newActiveStrings.add(replace);
                         }
                     }
                 }
@@ -44,15 +45,6 @@ public class Parser implements IParser {
         System.out.println(activeStrings);
         return activeStrings.contains(w);
     }
-
-      /*if rule applies to string
-      newActiveStrings.add(all strings with the rule applied)
-      activeStrings = newActiveStrings;
-    }
-    if (targetString is in activeStrings){
-    if (boolean contains = Arrays.stream(activeStrings).anyMatch(targetString::equals)) {
-      return contains;
-  }*/
 
     public ParseTreeNode generateParseTree(ContextFreeGrammar cfg, Word w) {
         if (this.isInLanguage(cfg, w)) {
