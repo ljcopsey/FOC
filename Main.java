@@ -31,11 +31,12 @@ class Main {
 
 		// Below is the kind of code you might want to write to test your parser
 
-		ContextFreeGrammar cfg = MyGrammar.courseworkCNF();
-		Word testString = new Word("x+x");
+		ContextFreeGrammar cfg = ContextFreeGrammar.simpleCNF();
+		Word testString = new Word("");
 
 		// this should print true!
 		System.out.println(parser.isInLanguage(cfg, testString));
+		System.out.println(parser.generateParseTree(cfg, testString));
 	}
 
 

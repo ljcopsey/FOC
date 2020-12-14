@@ -2,6 +2,7 @@ import computation.contextfreegrammar.*;
 import computation.parser.*;
 import computation.parsetree.*;
 import computation.derivation.*;
+
 import java.util.*;
 
 public class Parser implements IParser {
@@ -9,13 +10,14 @@ public class Parser implements IParser {
     public boolean isInLanguage(ContextFreeGrammar cfg, Word w) {
         ParseTreeNode isInLanguage = generateParseTree(cfg, w);
         return (isInLanguage != null);
-}
+    }
 
     public ParseTreeNode generateParseTree(ContextFreeGrammar cfg, Word w) {
         List<Derivation> activeDerivations = new ArrayList<>();
         List<Rule> rules;
         rules = cfg.getRules();
 
+        ParseTreeNode emptyTree = null;
         Variable startVariable = cfg.getStartVariable();
         Word startWord = new Word(startVariable);
         Derivation startDerivation = new Derivation(startWord);
@@ -23,9 +25,24 @@ public class Parser implements IParser {
 
         Derivation acceptedDerivation = null;
         boolean inLanguage = false;
+        boolean emptyStringRule = false;
 
         int steps = 0;
         int n = w.length();
+
+        // special case for empty string
+        if (n == 0) {
+            String empty = w.toString();
+            for (Rule rule : rules) {
+                if (empty.equals(rule.getExpansion().toString())) {
+                    Variable v = rule.getVariable();
+                    inLanguage = true;
+                    emptyTree = ParseTreeNode.emptyParseTree(v);
+                    emptyStringRule = true;
+                }
+            }
+        }
+
         while (steps < (2 * n - 1)) {
             List<Derivation> newActiveDerivations = new ArrayList<>();
             for (Derivation activeDerivation : activeDerivations) {
@@ -56,8 +73,10 @@ public class Parser implements IParser {
             }
         }
 
-        if (inLanguage) {
+        if (inLanguage && !emptyStringRule) {
             return buildParseTree(acceptedDerivation);
+        } else if (emptyStringRule) {
+            return emptyTree;
         }
         return null;
     }
